@@ -16,7 +16,6 @@ gitpython
 hachoir
 Faker
 pydub
-NTgCalls==1.2.1
 pycountry
 heroku3
 motor==3.3.2
@@ -33,7 +32,7 @@ pykeyboard
 pyshorteners
 pyrogram==2.0.106
 python-dotenv
-pytgcalls==2.0.1
+pytgcalls==0.0.2
 ntgcalls==1.2.1
 phonenumbers
 pyyaml==6.0.1
