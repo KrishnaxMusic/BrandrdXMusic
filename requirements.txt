@@ -32,7 +32,6 @@ pykeyboard
 pyshorteners
 pyrogram==2.0.106
 python-dotenv
-pytgcalls
 ntgcalls==1.2.1
 phonenumbers
 pyyaml==6.0.1
