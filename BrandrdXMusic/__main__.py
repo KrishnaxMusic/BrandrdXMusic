@@ -1,6 +1,6 @@
 import asyncio
 import importlib
-from sys import argv
+
 from pyrogram import idle
 from pytgcalls.exceptions import NoActiveGroupCall
 
@@ -11,10 +11,6 @@ from BrandrdXMusic.misc import sudo
 from BrandrdXMusic.plugins import ALL_MODULES
 from BrandrdXMusic.utils.database import get_banned_users, get_gbanned
 from config import BANNED_USERS
-
-from BrandrdXMusic.plugins.tools.clone import restart_bots
-
-
 
 
 async def init():
