@@ -10,6 +10,6 @@ WORKDIR /app/
 
 RUN python3 -m pip install --upgrade pip setuptools
 RUN apt-get update && apt-get install -y git
-RUN pip install -U uv && uv pip install --system -e .
+RUN pip3 install --no-cache-dir --upgrade -U uv && uv
 
 CMD ["python", "-m", "BrandrdXMusic"]
