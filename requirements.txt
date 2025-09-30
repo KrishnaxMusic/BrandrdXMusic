@@ -17,7 +17,7 @@ qrcode
 future==0.14.0
 search_engine_parser
 speedtest
-py-tgcalls==2.2.8
+py-tgcalls==0.8.1
 MukeshAPI
 ntgcalls==2.0.6
 gitpython
