@@ -1,15 +1,25 @@
-FROM python:3.10-slim-bullseye
+FROM nikolaik/python-nodejs:python3.10-nodejs20
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends ffmpeg \
+# Install system dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        ffmpeg \
+        git \
+        build-essential \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-COPY . /app/
-WORKDIR /app/
+# Set working directory
+WORKDIR /app
 
-RUN python3 -m pip install --upgrade pip setuptools
-RUN apt-get update && apt-get install -y git
-RUN pip3 install --no-cache-dir --upgrade --requirement requirements.txt
+# Copy project files
+COPY . .
 
-CMD python3 -m BrandrdXMusic
+# Upgrade pip and setuptools
+RUN python -m pip install --no-cache-dir --upgrade pip setuptools
+
+# Install Python dependencies
+RUN python -m pip install --no-cache-dir --upgrade -r requirements.txt
+
+# Run the bot
+CMD ["python", "-m", "BrandrdXMusic"]
