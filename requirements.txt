@@ -38,5 +38,5 @@ googlesearch-python
 unidecode
 # git+https://github.com/joetats/youtube_search@master
 # git+https://github.com/alexmercerind/youtube-search-python@main
-pyrogram==2.0.106         # replaced direct GitHub zip link
+https://github.com/KurimuzonAkuma/pyrogram/archive/v2.1.23.zip
 bing_image_downloader
