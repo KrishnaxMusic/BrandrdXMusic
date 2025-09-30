@@ -29,7 +29,7 @@ search_engine_parser
 MukeshAPI
 telegraph==2.2.0
 lexica-api==1.5.9
-httpx==0.27.0
+httpx==0.28.1
 openai==1.41.0
 SafoneAPI
 youtube-search-python
