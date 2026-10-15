@@ -587,8 +587,10 @@ class Call(PyTgCalls):
             pings.append(await self.five.ping)
         return str(round(sum(pings) / len(pings), 3))
 
+    
     async def start(self):
         LOGGER(__name__).info("Starting PyTgCalls Client...\n")
+
         if config.STRING1:
             await self.one.start()
         if config.STRING2:
@@ -599,6 +601,29 @@ class Call(PyTgCalls):
             await self.four.start()
         if config.STRING5:
             await self.five.start()
+
+    async def stop(self):
+        LOGGER(__name__).info("Stopping PyTgCalls Clients...")
+
+        clients = [
+            (config.STRING1, self.one),
+            (config.STRING2, self.two),
+            (config.STRING3, self.three),
+            (config.STRING4, self.four),
+            (config.STRING5, self.five),
+        ]
+
+        for session, client in clients:
+            if session:
+                try:
+                    await client.stop()
+                    LOGGER(__name__).info(
+                        "PyTgCalls client stopped successfully."
+                    )
+                except Exception:
+                    LOGGER(__name__).exception(
+                        "Failed to stop PyTgCalls client."
+                    )
 
     async def decorators(self):
         @self.one.on_kicked()
