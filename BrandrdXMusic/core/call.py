@@ -268,7 +268,7 @@ class Call(PyTgCalls):
                 additional_ffmpeg_parameters=f"-ss {to_seek} -to {duration}",
             )
         )
-        await assistant.change_stream(chat_id, stream)
+        await assistant.change_stream(_, videoid, chat_id)
 
     async def stream_call(self, link):
         assistant = await group_assistant(self, config.LOG_GROUP_ID)
@@ -385,7 +385,7 @@ class Call(PyTgCalls):
                         audio_parameters=HighQualityAudio(),
                     )
                 try:
-                    await client.change_stream(chat_id, stream)
+                    await client.change_stream(_, videoid, chat_id)
                 except Exception:
                     return await app.send_message(
                         original_chat_id,
@@ -431,7 +431,7 @@ class Call(PyTgCalls):
                         audio_parameters=HighQualityAudio(),
                     )
                 try:
-                    await client.change_stream(chat_id, stream)
+                    await client.change_stream(_, videoid, chat_id)
                 except:
                     return await app.send_message(
                         original_chat_id,
@@ -464,7 +464,7 @@ class Call(PyTgCalls):
                     else AudioPiped(videoid, audio_parameters=HighQualityAudio())
                 )
                 try:
-                    await client.change_stream(chat_id, stream)
+                    await client.change_stream(_, videoid, chat_id)
                 except:
                     return await app.send_message(
                         original_chat_id,
@@ -492,7 +492,7 @@ class Call(PyTgCalls):
                         audio_parameters=HighQualityAudio(),
                     )
                 try:
-                    await client.change_stream(chat_id, stream)
+                    await client.change_stream(_, videoid, chat_id)
                 except:
                     return await app.send_message(
                         original_chat_id,
@@ -595,7 +595,7 @@ class Call(PyTgCalls):
         async def stream_end_handler1(client, update: Update):
             if not isinstance(update, StreamAudioEnded):
                 return
-            await self.change_stream(client, update.chat_id)
+            await self.change_stream(_, videoid, chat_id)
 
 
 Hotty = Call()
