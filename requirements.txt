@@ -28,6 +28,7 @@ spotipy
 tgcrypto
 telegraph
 unidecode
+py-yt
 yt-dlp
 youtube-search
 youtube-search-python
