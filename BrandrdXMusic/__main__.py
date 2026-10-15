@@ -13,6 +13,15 @@ from BrandrdXMusic.utils.database import get_banned_users, get_gbanned
 from config import BANNED_USERS
 
 
+from pyrogram import filters
+
+@app.on_message(filters.all, group=-9999)
+async def debug_all_messages(client, message):
+    LOGGER(__name__).info(
+        f"INCOMING UPDATE: chat={message.chat.id}, "
+        f"text={message.text or message.caption or '<non-text>'}"
+    )
+    
 async def init():
     try:
         if not config.BOT_TOKEN:
