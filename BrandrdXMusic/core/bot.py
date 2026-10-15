@@ -25,6 +25,8 @@ class Hotty(Client):
         self.username = self.me.username
         self.mention = self.me.mention
 
+        LOGGER(__name__).info(f"DEBUG BOT USERNAME: @{self.username}")
+
         try:
             await self.send_message(
                 chat_id=config.LOGGER_ID,
