@@ -149,3 +149,10 @@ async def welcome(client, message: Message):
                 await message.stop_propagation()
         except Exception as ex:
             print(ex)
+
+
+@app.on_message(filters.command(["ping"]) & filters.private)
+async def debug_ping(client, message: Message):
+    print("DEBUG: PING HANDLER RECEIVED")
+    await message.reply_text("✅ Bot message receive kar raha hai!")
+
