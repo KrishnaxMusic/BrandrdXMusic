@@ -1,7 +1,8 @@
+
 import asyncio
 import importlib
 
-from pyrogram import idle
+from pyrogram import idle, filters
 from pytgcalls.exceptions import NoActiveGroupCall
 
 import config
@@ -56,6 +57,20 @@ async def init():
             "Successfully imported modules."
         )
 
+        # DEBUG: Receive and log all incoming messages.
+        @app.on_message(filters.all, group=-999)
+        async def debug_all_messages(client, message):
+            print(
+                "RAW MESSAGE RECEIVED | "
+                f"chat_id={message.chat.id} | "
+                f"text={message.text or message.caption or '<non-text>'}",
+                flush=True,
+            )
+
+        LOGGER(__name__).info(
+            "DEBUG: Incoming-message handler registered."
+        )
+
         await userbot.start()
         await Hotty.start()
 
@@ -84,7 +99,7 @@ async def init():
         await idle()
 
     except Exception:
-        LOGGER("BrandrdXMusic").exception(
+        LOGGER(__name__).exception(
             "An error occurred while running the bot"
         )
         raise
@@ -93,27 +108,25 @@ async def init():
         try:
             await Hotty.stop()
         except Exception:
-            LOGGER("BrandrdXMusic").exception(
+            LOGGER(__name__).exception(
                 "Failed to stop the voice call client"
             )
 
         try:
             await userbot.stop()
         except Exception:
-            LOGGER("BrandrdXMusic").exception(
+            LOGGER(__name__).exception(
                 "Failed to stop the assistant client"
             )
 
         try:
             await app.stop()
         except Exception:
-            LOGGER("BrandrdXMusic").exception(
+            LOGGER(__name__).exception(
                 "Failed to stop the bot client"
             )
 
-        LOGGER("BrandrdXMusic").info(
-            "BrandrdXMusic stopped."
-        )
+        LOGGER(__name__).info("BrandrdXMusic stopped.")
 
 
 if __name__ == "__main__":
