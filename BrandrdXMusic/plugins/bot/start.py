@@ -28,6 +28,7 @@ from strings import get_string
 @app.on_message(filters.command(["start"]) & filters.private & ~BANNED_USERS)
 @LanguageStart
 async def start_pm(client, message: Message, _):
+    print("DEBUG: start_pm handler triggered")
 
     await add_served_user(message.from_user.id)
 
