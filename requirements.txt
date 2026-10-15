@@ -33,6 +33,7 @@ py-yt-search
 yt-dlp
 youtube-search
 youtube-search-python
+telethon
 gtts
 git+https://github.com/AsmSafone/SafoneAPI
 lexica-api==1.5.1
