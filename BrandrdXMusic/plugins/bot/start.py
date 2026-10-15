@@ -26,8 +26,14 @@ from strings import get_string
 @app.on_message(filters.command(["start"]) & filters.private & ~BANNED_USERS)
 @LanguageStart
 async def start_pm(client, message: Message, _):
-    await add_served_user(message.from_user.id)
+    
+await add_served_user(message.from_user.id)
+
+try:
     await message.react("❤")
+except Exception as e:
+    print(f"Start reaction failed: {e}")
+
     if len(message.text.split()) > 1:
         name = message.text.split(None, 1)[1]
         if name[0:4] == "help":
@@ -38,7 +44,7 @@ async def start_pm(client, message: Message, _):
                 caption=_["help_1"].format(config.SUPPORT_CHAT),
                 reply_markup=keyboard,
             )
-        if name[0:3] == "sud":
+        if name[0:3] == "sud":9
             await sudoers_list(client=client, message=message, _=_)
             if await is_on_off(2):
                 return await app.send_message(
