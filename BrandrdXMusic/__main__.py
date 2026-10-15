@@ -1,8 +1,7 @@
-
 import asyncio
 import importlib
 
-from pyrogram import idle, filters
+from pyrogram import filters, idle
 from pytgcalls.exceptions import NoActiveGroupCall
 
 import config
@@ -15,62 +14,63 @@ from config import BANNED_USERS
 
 
 async def init():
-    if not any(
-        [
+    try:
+        if not config.BOT_TOKEN:
+            LOGGER(__name__).error("BOT_TOKEN is missing!")
+            return
+
+        if not any([
             config.STRING1,
             config.STRING2,
             config.STRING3,
             config.STRING4,
             config.STRING5,
-        ]
-    ):
-        LOGGER(__name__).error(
-            "Assistant client variables not defined, exiting..."
-        )
-        return
+        ]):
+            LOGGER(__name__).error(
+                "No assistant session configured!"
+            )
+            return
 
-    await sudo()
+        await sudo()
 
-    try:
-        users = await get_gbanned()
-        for user_id in users:
-            BANNED_USERS.add(user_id)
+        try:
+            users = await get_gbanned()
+            BANNED_USERS.update(users)
 
-        users = await get_banned_users()
-        for user_id in users:
-            BANNED_USERS.add(user_id)
+            users = await get_banned_users()
+            BANNED_USERS.update(users)
+        except Exception:
+            LOGGER(__name__).exception(
+                "Failed to load banned users"
+            )
 
-    except Exception:
-        LOGGER(__name__).exception(
-            "Failed to load banned users from database"
-        )
-
-    try:
+        # Start bot and verify the actual bot identity.
         await app.start()
 
-        for all_module in ALL_MODULES:
-            importlib.import_module(
-                "BrandrdXMusic.plugins" + all_module
-            )
-
-        LOGGER("BrandrdXMusic.plugins").info(
-            "Successfully imported modules."
-        )
-
-        # DEBUG: Receive and log all incoming messages.
-        @app.on_message(filters.all, group=-999)
-        async def debug_all_messages(client, message):
-            print(
-                "RAW MESSAGE RECEIVED | "
-                f"chat_id={message.chat.id} | "
-                f"text={message.text or message.caption or '<non-text>'}",
-                flush=True,
-            )
-
+        me = await app.get_me()
         LOGGER(__name__).info(
-            "DEBUG: Incoming-message handler registered."
+            f"BOT CONNECTED: @{me.username} | ID: {me.id}"
         )
 
+        # Register diagnostic handler BEFORE importing plugins.
+        @app.on_message(filters.all, group=-9999)
+        async def debug_all_messages(client, message):
+            LOGGER(__name__).info(
+                "INCOMING UPDATE: "
+                f"chat={message.chat.id} "
+                f"user={getattr(message.from_user, 'id', None)} "
+                f"text={message.text or message.caption or '<non-text>'}"
+            )
+
+        # Import all bot plugins.
+        for module in ALL_MODULES:
+            importlib.import_module(
+                "BrandrdXMusic.plugins" + module
+            )
+
+        LOGGER(__name__).info("All plugins imported.")
+
+        # Load banned-user lists and start assistant.
         await userbot.start()
         await Hotty.start()
 
@@ -79,54 +79,44 @@ async def init():
                 "https://graph.org/file/e999c40cb700e7c684b75.mp4"
             )
         except NoActiveGroupCall:
-            LOGGER("BrandrdXMusic").error(
-                "No active voice chat found in the configured log group. "
-                "Start its voice chat and restart the bot."
+            LOGGER(__name__).warning(
+                "No active voice chat found. "
+                "Start a voice chat in the configured log group."
             )
-            return
         except Exception:
-            LOGGER("BrandrdXMusic").exception(
-                "Initial stream failed"
+            LOGGER(__name__).exception(
+                "Initial music stream failed; bot will remain running."
             )
-            return
 
         await Hotty.decorators()
 
-        LOGGER("BrandrdXMusic").info(
-            "BrandrdXMusic started successfully."
+        LOGGER(__name__).info(
+            "Bot startup complete. Waiting for Telegram updates."
         )
 
         await idle()
 
     except Exception:
-        LOGGER(__name__).exception(
-            "An error occurred while running the bot"
-        )
+        LOGGER(__name__).exception("Bot startup/runtime failed")
         raise
 
     finally:
         try:
             await Hotty.stop()
         except Exception:
-            LOGGER(__name__).exception(
-                "Failed to stop the voice call client"
-            )
+            LOGGER(__name__).exception("Failed to stop PyTgCalls")
 
         try:
             await userbot.stop()
         except Exception:
-            LOGGER(__name__).exception(
-                "Failed to stop the assistant client"
-            )
+            LOGGER(__name__).exception("Failed to stop assistant")
 
         try:
             await app.stop()
         except Exception:
-            LOGGER(__name__).exception(
-                "Failed to stop the bot client"
-            )
+            LOGGER(__name__).exception("Failed to stop bot")
 
-        LOGGER(__name__).info("BrandrdXMusic stopped.")
+        LOGGER(__name__).info("Bot stopped.")
 
 
 if __name__ == "__main__":
