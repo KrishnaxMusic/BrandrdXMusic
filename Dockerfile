@@ -1,5 +1,4 @@
-
-FROM nikolaik/python-nodejs:python3.10-nodejs19-bookworm
+FROM nikolaik/python-nodejs:python3.10-nodejs24-bookworm
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends ffmpeg \
