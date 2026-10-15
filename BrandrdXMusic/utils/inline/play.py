@@ -75,7 +75,7 @@ def stream_markup_timer(_, vidid, chat_id, played, dur):
 
 
 # Stream Markup
-def stream_markup(_, videoid, chat_id):
+def stream_markup(_, chat_id):
     return [
         [
             InlineKeyboardButton(text="▷", callback_data=f"ADMIN Resume|{chat_id}"),
