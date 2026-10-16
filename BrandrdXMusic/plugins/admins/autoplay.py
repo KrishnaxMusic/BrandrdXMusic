@@ -19,7 +19,7 @@ def _autoplay_command_text(mode: bool) -> str:
     )
 
 
-@nand.on_message(filters.command(["autoplay"]) & filters.group & ~BANNED_USERS)
+@app.on_message(filters.command(["autoplay"]) & filters.group & ~BANNED_USERS)
 @AdminRightsCheckAnyTime
 async def autoplay_command(client, message: Message, _, chat_id):
     mode = await is_autoplay(chat_id)
