@@ -4,7 +4,6 @@ dnspython
 hachoir
 heroku3
 motor
-pymongo
 pillow
 psutil
 speedtest
