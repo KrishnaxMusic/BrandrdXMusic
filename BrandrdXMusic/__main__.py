@@ -7,7 +7,7 @@ from pyrogram import idle
 from pyrogram.raw.types import UpdateGroupCall, PeerChannel, PeerChat
 from pytgcalls.exceptions import NoActiveGroupCall
 
-Compatibility patch for py-tgcalls 0.9.7
+#Compatibility patch for py-tgcalls 0.9.7
 
 if not hasattr(UpdateGroupCall, "chat_id"):
 def _chat_id(self):
