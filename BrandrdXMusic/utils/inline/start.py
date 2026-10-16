@@ -25,7 +25,7 @@ def start_panel(_):
         [
             InlineKeyboardButton(
                 text=_["S_B_1"],
-                url=f"https://t.me/{nand.username}?startgroup=true",
+                url=f"https://t.me/{app.username}?startgroup=true",
                 style=s[0],
             ),
             InlineKeyboardButton(
@@ -44,7 +44,7 @@ def private_panel(_):
         [
             InlineKeyboardButton(
                 text=_["S_B_3"],
-                url=f"https://t.me/{nand.username}?startgroup=true",
+                url=f"https://t.me/{app.username}?startgroup=true",
                 style=s[0],
             )
         ],
