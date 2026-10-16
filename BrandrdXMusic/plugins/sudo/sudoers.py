@@ -6,7 +6,6 @@ from BrandrdXMusic.utils.database import add_sudo, remove_sudo
 from BrandrdXMusic.utils.decorators.language import language
 from BrandrdXMusic.utils.extraction import extract_user
 from BrandrdXMusic.utils.inline import close_markup
-from ShrutiMusic.utils.functions import DevID
 from config import BANNED_USERS, OWNER_ID
 
 @app.on_message(filters.command(["addsudo"]) & filters.user(OWNER_ID))
