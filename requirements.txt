@@ -9,7 +9,6 @@ psutil
 speedtest
 py-tgcalls==0.9.7
 pymongo
-ntgcalls
 gitpython
 pykeyboard
 python-dotenv
