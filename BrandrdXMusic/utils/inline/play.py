@@ -1,7 +1,10 @@
+
 import math
 
+from BrandrdXMusic.utils.database import is_autoplay
 from pyrogram.types import InlineKeyboardButton
 from BrandrdXMusic.utils.formatters import time_to_seconds
+
 
 # Track Markup
 def track_markup(_, videoid, user_id, channel, fplay):
@@ -95,6 +98,12 @@ def stream_markup_timer(_, vidid, chat_id, played, dur):
         ],
         [
             InlineKeyboardButton(
+                text="🔁 Aᴜᴛᴏ Pʟᴀʏ",
+                callback_data=f"autoplay {chat_id}",
+            ),
+        ],
+        [
+            InlineKeyboardButton(
                 text=_["CLOSE_BUTTON"],
                 callback_data="close",
             ),
@@ -130,14 +139,11 @@ def stream_markup(_, videoid, chat_id):
         ],
         [
             InlineKeyboardButton(
-                text="ᴏᴡɴᴇʀ",
-                url="https://t.me/BRANDEDKING8",
-            ),
-            InlineKeyboardButton(
-                text="sᴜᴘᴘᴏʀᴛ",
-                url="https://t.me/BRANDED_WORLD",
+                text="🔁 Aᴜᴛᴏ Pʟᴀʏ",
+                callback_data=f"autoplay {chat_id}",
             ),
         ],
+
         [
             InlineKeyboardButton(
                 text=_["CLOSE_BUTTON"],
@@ -199,7 +205,7 @@ def livestream_markup(_, videoid, user_id, mode, channel, fplay):
 # Slider Markup
 def slider_markup(_, videoid, user_id, query, query_type, channel, fplay):
     query = str(query)[:20]
-    buttons =[
+    buttons = [
         [
             InlineKeyboardButton(
                 text=_["P_B_1"],
