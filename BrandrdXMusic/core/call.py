@@ -1,5 +1,6 @@
 import asyncio
 import os
+import wave
 from datetime import datetime, timedelta
 from typing import Union
 
@@ -25,6 +26,7 @@ from BrandrdXMusic.utils.database import (
     get_lang,
     get_loop,
     group_assistant,
+    is_active_chat,
     is_autoend,
     music_on,
     remove_active_chat,
@@ -49,6 +51,52 @@ async def _clear_(chat_id):
     discard_prefetch(chat_id)
     await remove_active_video_chat(chat_id)
     await remove_active_chat(chat_id)
+
+
+
+PLACEHOLDER_SECONDS = 120
+_video_placeholder_lock = asyncio.Lock()
+
+
+def _silence_path():
+    path = os.path.abspath(os.path.join("cache", "silence.wav"))
+    if not os.path.isfile(path) or os.path.getsize(path) == 0:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with wave.open(path, "wb") as f:
+            f.setnchannels(1)
+            f.setsampwidth(1)
+            f.setframerate(8000)
+            f.writeframes(b"\\x80" * 8000 * PLACEHOLDER_SECONDS)
+    return path
+
+
+async def _silence_video_path():
+    path = os.path.abspath(os.path.join("cache", "silence.mp4"))
+    if os.path.isfile(path) and os.path.getsize(path) > 0:
+        return path
+    async with _video_placeholder_lock:
+        if os.path.isfile(path) and os.path.getsize(path) > 0:
+            return path
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        tmp = path + ".tmp"
+        proc = await asyncio.create_subprocess_exec(
+            "ffmpeg", "-y", "-f", "lavfi", "-i",
+            "color=c=black:s=320x180:r=15",
+            "-f", "lavfi", "-i", "anullsrc=r=8000:cl=mono",
+            "-t", str(PLACEHOLDER_SECONDS),
+            "-c:v", "libx264", "-preset", "ultrafast",
+            "-pix_fmt", "yuv420p", "-c:a", "aac",
+            "-shortest", "-f", "mp4", tmp,
+            stdout=asyncio.subprocess.DEVNULL,
+            stderr=asyncio.subprocess.DEVNULL,
+        )
+        await proc.communicate()
+        if proc.returncode != 0 or not os.path.isfile(tmp) or os.path.getsize(tmp) == 0:
+            if os.path.isfile(tmp):
+                os.remove(tmp)
+            raise RuntimeError("Silent video placeholder generation failed")
+        os.replace(tmp, path)
+    return path
 
 
 class Call(PyTgCalls):
@@ -92,6 +140,84 @@ class Call(PyTgCalls):
             session_string=str(config.STRING5),
         )
         self.five = PyTgCalls(self.userbot5, cache_duration=100)
+
+        self._prejoin_tasks = {}
+        self._prejoin_video = {}
+        self._chat_locks = {}
+
+    def chat_lock(self, chat_id: int):
+        lock = self._chat_locks.get(chat_id)
+        if lock is None:
+            lock = asyncio.Lock()
+            self._chat_locks[chat_id] = lock
+        return lock
+
+    async def _assistant_join(self, assistant, chat_id: int, stream, _):
+        try:
+            await assistant.join_group_call(
+                chat_id, stream, stream_type=StreamType().pulse_stream
+            )
+        except NoActiveGroupCall:
+            raise AssistantErr(_["call_8"])
+        except AlreadyJoinedError:
+            raise AssistantErr(_["call_9"])
+        except TelegramServerError:
+            raise AssistantErr(_["call_10"])
+
+    async def _run_prejoin(self, chat_id: int, video: bool = False):
+        assistant = await group_assistant(self, chat_id)
+        _ = get_string(await get_lang(chat_id))
+        used_video = False
+        if video:
+            try:
+                path = await _silence_video_path()
+                stream = AudioVideoPiped(
+                    path,
+                    audio_parameters=HighQualityAudio(),
+                    video_parameters=MediumQualityVideo(),
+                )
+                used_video = True
+            except Exception:
+                stream = AudioPiped(
+                    _silence_path(), audio_parameters=HighQualityAudio()
+                )
+        else:
+            stream = AudioPiped(
+                _silence_path(), audio_parameters=HighQualityAudio()
+            )
+        self._prejoin_video[chat_id] = used_video
+        await self._assistant_join(assistant, chat_id, stream, _)
+
+    async def prejoin_start(self, chat_id: int, video: bool = False) -> bool:
+        async with self.chat_lock(chat_id):
+            if chat_id in self._prejoin_tasks or await is_active_chat(chat_id):
+                return False
+            task = asyncio.create_task(self._run_prejoin(chat_id, video))
+            # Retain task so failures can be retrieved by await_prejoin/join_call.
+            self._prejoin_tasks[chat_id] = task
+            return True
+
+    async def await_prejoin(self, chat_id: int):
+        task = self._prejoin_tasks.get(chat_id)
+        if task is not None:
+            await asyncio.shield(task)
+
+    async def prejoin_settle(self, chat_id: int):
+        async with self.chat_lock(chat_id):
+            task = self._prejoin_tasks.pop(chat_id, None)
+            self._prejoin_video.pop(chat_id, None)
+            if task is None:
+                return
+            try:
+                await asyncio.shield(task)
+            except Exception:
+                return
+            try:
+                assistant = await group_assistant(self, chat_id)
+                await assistant.leave_group_call(chat_id)
+            except Exception:
+                pass
+
 
     async def pause_stream(self, chat_id: int):
         assistant = await group_assistant(self, chat_id)
@@ -296,18 +422,31 @@ class Call(PyTgCalls):
         else:
             stream = AudioPiped(link, audio_parameters=HighQualityAudio())
 
-        try:
-            await assistant.join_group_call(
-                chat_id,
-                stream,
-                stream_type=StreamType().pulse_stream,
-            )
-        except NoActiveGroupCall:
-            raise AssistantErr(_["call_8"])
-        except AlreadyJoinedError:
-            raise AssistantErr(_["call_9"])
-        except TelegramServerError:
-            raise AssistantErr(_["call_10"])
+        async with self.chat_lock(chat_id):
+            joined = False
+            task = self._prejoin_tasks.pop(chat_id, None)
+            if task is not None:
+                try:
+                    await asyncio.shield(task)
+                    prejoin_was_video = self._prejoin_video.pop(chat_id, False)
+                    if bool(video) == prejoin_was_video:
+                        try:
+                            await assistant.change_stream(chat_id, stream)
+                            joined = True
+                        except Exception:
+                            try:
+                                await assistant.leave_group_call(chat_id)
+                            except Exception:
+                                pass
+                    else:
+                        try:
+                            await assistant.leave_group_call(chat_id)
+                        except Exception:
+                            pass
+                except Exception:
+                    self._prejoin_video.pop(chat_id, None)
+            if not joined:
+                await self._assistant_join(assistant, chat_id, stream, _)
 
         await add_active_chat(chat_id)
         await music_on(chat_id)
@@ -324,6 +463,8 @@ class Call(PyTgCalls):
     async def change_stream(self, client, chat_id):
         check = db.get(chat_id)
         popped = None
+        if not check:
+            return
         loop = await get_loop(chat_id)
 
         try:
@@ -630,6 +771,8 @@ class Call(PyTgCalls):
         @self.five.on_stream_end()
         async def stream_end_handler1(client, update: Update):
             if not isinstance(update, StreamAudioEnded):
+                return
+            if update.chat_id in self._prejoin_tasks:
                 return
             await self.change_stream(client, update.chat_id)
 
