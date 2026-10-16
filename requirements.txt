@@ -7,7 +7,7 @@ motor
 pillow
 psutil
 speedtest
-py-tgcalls
+py-tgcalls==0.9.7
 ntgcalls
 gitpython
 pykeyboard
@@ -15,7 +15,7 @@ python-dotenv
 pyyaml
 tgcrypto
 httpx[http2]
-lyricsgenius==3.0.0
+lyricsgenius
 spotipy
 SafoneAPI
 unidecode
