@@ -21,6 +21,7 @@ tgcrypto
 telegraph
 unidecode
 yt-dlp
+py_yt
 youtube-search
 youtube-search-python
 git+https://github.com/AsmSafone/SafoneAPI
@@ -29,7 +30,6 @@ gpytranslate
 python-telegram-bot
 pycryptodome
 opencv-python
-sympy
 ntgcalls==1.1.2
 lyricsgenius==3.0.0
 uvloop; sys_platform != "win32"
