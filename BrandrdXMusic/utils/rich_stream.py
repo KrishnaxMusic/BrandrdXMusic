@@ -4,9 +4,9 @@ import re
 
 from pyrogram import enums, errors, types
 
-from ShrutixMusic.misc import db
-from ShrutixMusic.utils.database import get_lang, is_autoplay
-from ShrutixMusic.utils.formatters import seconds_to_min, time_to_seconds
+from BrandrdXMusicc.misc import db
+from BrandrdXMusic.utils.database import get_lang, is_autoplay
+from BrandrdXMusic.utils.formatters import seconds_to_min, time_to_seconds
 from strings import get_string
 
 _TAG_RE = re.compile(r"<(/?)(b|a|code)(?:\s+href=([^>]+))?>", re.IGNORECASE)
