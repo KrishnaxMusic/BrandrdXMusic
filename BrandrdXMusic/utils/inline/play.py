@@ -1,4 +1,3 @@
-
 import math
 
 from BrandrdXMusic.utils.database import is_autoplay
