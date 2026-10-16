@@ -53,7 +53,6 @@ async def _clear_(chat_id):
     await remove_active_chat(chat_id)
 
 
-
 PLACEHOLDER_SECONDS = 120
 _video_placeholder_lock = asyncio.Lock()
 
@@ -66,7 +65,7 @@ def _silence_path():
             f.setnchannels(1)
             f.setsampwidth(1)
             f.setframerate(8000)
-            f.writeframes(b"\\x80" * 8000 * PLACEHOLDER_SECONDS)
+            f.writeframes(b"\x80" * 8000 * PLACEHOLDER_SECONDS)
     return path
 
 
@@ -80,13 +79,30 @@ async def _silence_video_path():
         os.makedirs(os.path.dirname(path), exist_ok=True)
         tmp = path + ".tmp"
         proc = await asyncio.create_subprocess_exec(
-            "ffmpeg", "-y", "-f", "lavfi", "-i",
+            "ffmpeg",
+            "-y",
+            "-f",
+            "lavfi",
+            "-i",
             "color=c=black:s=320x180:r=15",
-            "-f", "lavfi", "-i", "anullsrc=r=8000:cl=mono",
-            "-t", str(PLACEHOLDER_SECONDS),
-            "-c:v", "libx264", "-preset", "ultrafast",
-            "-pix_fmt", "yuv420p", "-c:a", "aac",
-            "-shortest", "-f", "mp4", tmp,
+            "-f",
+            "lavfi",
+            "-i",
+            "anullsrc=r=8000:cl=mono",
+            "-t",
+            str(PLACEHOLDER_SECONDS),
+            "-c:v",
+            "libx264",
+            "-preset",
+            "ultrafast",
+            "-pix_fmt",
+            "yuv420p",
+            "-c:a",
+            "aac",
+            "-shortest",
+            "-f",
+            "mp4",
+            tmp,
             stdout=asyncio.subprocess.DEVNULL,
             stderr=asyncio.subprocess.DEVNULL,
         )
@@ -193,7 +209,6 @@ class Call(PyTgCalls):
             if chat_id in self._prejoin_tasks or await is_active_chat(chat_id):
                 return False
             task = asyncio.create_task(self._run_prejoin(chat_id, video))
-            # Retain task so failures can be retrieved by await_prejoin/join_call.
             self._prejoin_tasks[chat_id] = task
             return True
 
@@ -217,7 +232,6 @@ class Call(PyTgCalls):
                 await assistant.leave_group_call(chat_id)
             except Exception:
                 pass
-
 
     async def pause_stream(self, chat_id: int):
         assistant = await group_assistant(self, chat_id)
@@ -290,7 +304,6 @@ class Call(PyTgCalls):
                 await proc.communicate()
                 if proc.returncode != 0 or not os.path.isfile(out):
                     raise AssistantErr("Could not create the speed-adjusted audio.")
-
         else:
             out = file_path
 
@@ -500,7 +513,6 @@ class Call(PyTgCalls):
             streamtype = check[0]["streamtype"]
             videoid = check[0]["vidid"]
 
-            # Save YouTube song history for Auto Play recommendations.
             if videoid and videoid not in ("telegram", "soundcloud"):
                 record_played(chat_id, videoid)
 
@@ -541,7 +553,7 @@ class Call(PyTgCalls):
                     )
 
                 img = await get_thumb(videoid)
-                button = stream_markup(_, videoid, chat_id)
+                button = await stream_markup(_, videoid, chat_id)
 
                 run = await app.send_photo(
                     chat_id=original_chat_id,
@@ -592,7 +604,7 @@ class Call(PyTgCalls):
                     )
 
                 img = await get_thumb(videoid)
-                button = stream_markup(_, videoid, chat_id)
+                button = await stream_markup(_, videoid, chat_id)
                 await mystic.delete()
 
                 run = await app.send_photo(
@@ -627,7 +639,7 @@ class Call(PyTgCalls):
                         original_chat_id, text=_["call_6"]
                     )
 
-                button = stream_markup(_, videoid, chat_id)
+                button = await stream_markup(_, videoid, chat_id)
 
                 run = await app.send_photo(
                     chat_id=original_chat_id,
@@ -657,7 +669,7 @@ class Call(PyTgCalls):
                     )
 
                 if videoid == "telegram":
-                    button = stream_markup(_, videoid, chat_id)
+                    button = await stream_markup(_, videoid, chat_id)
 
                     run = await app.send_photo(
                         chat_id=original_chat_id,
@@ -678,7 +690,7 @@ class Call(PyTgCalls):
                     db[chat_id][0]["markup"] = "tg"
 
                 elif videoid == "soundcloud":
-                    button = stream_markup(_, videoid, chat_id)
+                    button = await stream_markup(_, videoid, chat_id)
 
                     run = await app.send_photo(
                         chat_id=original_chat_id,
@@ -696,7 +708,7 @@ class Call(PyTgCalls):
 
                 else:
                     img = await get_thumb(videoid)
-                    button = stream_markup(_, videoid, chat_id)
+                    button = await stream_markup(_, videoid, chat_id)
 
                     run = await app.send_photo(
                         chat_id=original_chat_id,
