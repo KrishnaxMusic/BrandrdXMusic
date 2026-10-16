@@ -968,3 +968,42 @@ async def add_served_chat_clone(chat_id: int):
 
 async def delete_served_chat_clone(chat_id: int):
     await chatsdbc.delete_one({"chat_id": chat_id})
+
+# =========================================================
+# AUTO PLAY DATABASE
+# =========================================================
+
+async def is_autoplay(chat_id: int) -> bool:
+    """Check whether Auto Play is enabled for a group."""
+    if chat_id in autoplay:
+        return autoplay[chat_id]
+
+    data = await autoplaydb.find_one({"chat_id": chat_id})
+
+    if data is None:
+        autoplay[chat_id] = False
+        return False
+
+    enabled = bool(data.get("enabled", True))
+    autoplay[chat_id] = enabled
+    return enabled
+
+
+async def autoplay_on(chat_id: int):
+    """Enable Auto Play and save the setting in MongoDB."""
+    await autoplaydb.update_one(
+        {"chat_id": chat_id},
+        {"$set": {"enabled": True}},
+        upsert=True,
+    )
+    autoplay[chat_id] = True
+
+
+async def autoplay_off(chat_id: int):
+    """Disable Auto Play and save the setting in MongoDB."""
+    await autoplaydb.update_one(
+        {"chat_id": chat_id},
+        {"$set": {"enabled": False}},
+        upsert=True,
+    )
+    autoplay[chat_id] = False
