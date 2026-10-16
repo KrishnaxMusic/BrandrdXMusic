@@ -95,20 +95,21 @@ def stream_markup_timer(_, vidid, chat_id, played, dur):
                 callback_data=f"ADMIN Stop|{chat_id}",
             ),
         ],
-        [
-            InlineKeyboardButton(
-                text="🔁 Aᴜᴛᴏ Pʟᴀʏ",
-                callback_data=f"autoplay {chat_id}",
-            ),
-        ],
+        
         [
             InlineKeyboardButton(
                 text=_["CLOSE_BUTTON"],
                 callback_data="close",
-            ),
+            )
         ],
     ]
     return buttons
+
+
+def autoplay_markup(chat_id, mode: bool):
+    text = "🔁 Autoplay: ON" if mode else "🔁 Autoplay: OFF"
+    return [InlineKeyboardButton(text=text, callback_data=f"autoplay {chat_id}")]
+
 
 
 # Stream Markup
@@ -136,13 +137,7 @@ def stream_markup(_, videoid, chat_id):
                 callback_data=f"ADMIN Stop|{chat_id}",
             ),
         ],
-        [
-            InlineKeyboardButton(
-                text="🔁 Aᴜᴛᴏ Pʟᴀʏ",
-                callback_data=f"autoplay {chat_id}",
-            ),
-        ],
-
+       
         [
             InlineKeyboardButton(
                 text=_["CLOSE_BUTTON"],
