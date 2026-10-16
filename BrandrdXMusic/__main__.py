@@ -12,6 +12,13 @@ from BrandrdXMusic.plugins import ALL_MODULES
 from BrandrdXMusic.utils.database import get_banned_users, get_gbanned
 from config import BANNED_USERS
 
+class _EndedCallNoiseFilter(logging.Filter):
+    def filter(self, record):
+        message = record.getMessage()
+        return not ("SetVideoCallStatus" in message and "GROUPCALL_FORBIDDEN" in message)
+
+logging.getLogger("asyncio").addFilter(_EndedCallNoiseFilter())
+
 
 async def init():
     if (
