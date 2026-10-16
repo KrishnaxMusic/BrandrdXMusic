@@ -4,7 +4,7 @@ import re
 
 from pyrogram import enums, errors, types
 
-from BrandrdXMusicc.misc import db
+from BrandrdXMusic.misc import db
 from BrandrdXMusic.utils.database import get_lang, is_autoplay
 from BrandrdXMusic.utils.formatters import seconds_to_min, time_to_seconds
 from strings import get_string
