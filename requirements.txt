@@ -14,7 +14,7 @@ wget
 qrcode
 future==0.14.0
 speedtest
-py-tgcalls==0.7.8
+py-tgcalls==1.2.9
 ntgcalls==1.1.2
 gitpython
 pykeyboard
