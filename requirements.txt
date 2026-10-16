@@ -8,6 +8,7 @@ gitpython
 hachoir
 httpx[http2]
 heroku3
+speedtest
 motor 
 pillow==9.5.0
 psutil
