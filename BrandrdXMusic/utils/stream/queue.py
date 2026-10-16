@@ -4,6 +4,7 @@ from typing import Union
 
 from BrandrdXMusic.misc import db
 from BrandrdXMusic.utils.formatters import check_duration, seconds_to_min
+from BrandrdXMusic.utils.stream.seed import set_seed
 from config import autoclean, time_to_seconds
 
 _YOUTUBE_ID_RE = re.compile(r"^[A-Za-z0-9_-]{11}$")
