@@ -7,16 +7,20 @@ from BrandrdXMusic import YouTube, app
 from BrandrdXMusic.core.call import Hotty
 from BrandrdXMusic.misc import SUDOERS, db
 from BrandrdXMusic.utils.database import (
+    autoplay_off,
+    autoplay_on,
     get_active_chats,
     get_lang,
     get_upvote_count,
     is_active_chat,
+    is_autoplay,
     is_music_playing,
     is_nonadmin_chat,
     music_off,
     music_on,
     set_loop,
 )
+from BrandrdXMusic.utils.decorators.admins import ActualAdminCB
 from BrandrdXMusic.utils.decorators.language import languageCB
 from BrandrdXMusic.utils.formatters import seconds_to_min
 from BrandrdXMusic.utils.inline import (
@@ -437,6 +441,19 @@ async def markup_timer():
                     continue
             except:
                 continue
+
+@app.on_callback_query(filters.regex(r"^nowplaying_autoplay ") & ~BANNED_USERS)
+@ActualAdminCB
+async def nowplaying_autoplay_toggle(client, CallbackQuery, _):
+    chat_id = int(CallbackQuery.data.split(None, 1)[1])
+    if await is_autoplay(chat_id):
+        await autoplay_off(chat_id)
+        toast = "Autoplay turned OFF"
+    else:
+        await autoplay_on(chat_id)
+        toast = "Autoplay turned ON"
+    await CallbackQuery.answer(toast, show_alert=False)
+    await set_now_playing_state(chat_id, await is_music_playing(chat_id))
 
 
 asyncio.create_task(markup_timer())
