@@ -19,16 +19,9 @@ onoffdb = mongodb.onoffper
 playmodedb = mongodb.playmode
 playtypedb = mongodb.playtypedb
 skipdb = mongodb.skipmode
+autoplaydb = mongodb.autoplay
 sudoersdb = mongodb.sudoers
 usersdb = mongodb.tgusersdb
-privatedb = mongodb.privatechats
-suggdb = mongodb.suggestion
-cleandb = mongodb.cleanmode
-queriesdb = mongodb.queries
-userdb = mongodb.userstats
-videodb = mongodb.vipvideocalls
-chatsdbc = mongodb.chatsc  # for clone
-usersdbc = mongodb.tgusersdbc  # for clone
 
 # Shifting to memory [mongo sucks often]
 active = []
@@ -45,12 +38,7 @@ pause = {}
 playmode = {}
 playtype = {}
 skipmode = {}
-privatechats = {}
-cleanmode = []
-suggestion = {}
-mute = {}
-audio = {}
-video = {}
+autoplay = {}
 
 # Total Queries on bot
 
