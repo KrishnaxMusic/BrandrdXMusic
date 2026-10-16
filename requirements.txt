@@ -20,6 +20,7 @@ spotipy
 SafoneAPI
 unidecode
 kurigram>=2.2.26
+telegraph
 yt-dlp
 yt-search-py
 youtube-search
