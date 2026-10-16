@@ -27,7 +27,7 @@ async def autoplay_command(client, message: Message, _, chat_id):
     await message.reply_text(_autoplay_command_text(mode), reply_markup=markup)
 
 
-@nand.on_callback_query(filters.regex(r"^autoplay ") & ~BANNED_USERS)
+@app.on_callback_query(filters.regex(r"^autoplay ") & ~BANNED_USERS)
 @ActualAdminCB
 async def autoplay_toggle(client, CallbackQuery, _):
     chat_id = int(CallbackQuery.data.split(None, 1)[1])
