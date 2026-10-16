@@ -14,6 +14,7 @@ psutil
 py-tgcalls==0.9.7
 pyrofork
 python-dotenv
+pykeyboard
 pyyaml==6.0.1
 kurigram>=2.2.26
 spotipy
