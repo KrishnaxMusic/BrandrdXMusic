@@ -32,13 +32,11 @@ from BrandrdXMusic.utils.database import (
     set_loop,
 )
 from BrandrdXMusic.utils.exceptions import AssistantErr
-from BrandrdXMusic.utils.formatters import (
-    check_duration,
-    seconds_to_min,
-    speed_converter,
-)
+from BrandrdXMusic.utils.formatters import check_duration, seconds_to_min, speed_converter
 from BrandrdXMusic.utils.inline.play import stream_markup
 from BrandrdXMusic.utils.stream.autoclear import auto_clean
+from BrandrdXMusic.utils.stream.autoplay import discard_prefetch, try_autoplay
+from BrandrdXMusic.utils.stream.history import record_played
 from BrandrdXMusic.utils.thumbnails import get_thumb
 from strings import get_string
 
@@ -48,6 +46,7 @@ counter = {}
 
 async def _clear_(chat_id):
     db[chat_id] = []
+    discard_prefetch(chat_id)
     await remove_active_video_chat(chat_id)
     await remove_active_chat(chat_id)
 
@@ -337,6 +336,8 @@ class Call(PyTgCalls):
             await auto_clean(popped)
 
             if not check:
+                if await try_autoplay(chat_id, popped):
+                    return
                 await _clear_(chat_id)
                 return await client.leave_group_call(chat_id)
 
@@ -357,6 +358,10 @@ class Call(PyTgCalls):
             original_chat_id = check[0]["chat_id"]
             streamtype = check[0]["streamtype"]
             videoid = check[0]["vidid"]
+
+            # Save YouTube song history for Auto Play recommendations.
+            if videoid and videoid not in ("telegram", "soundcloud"):
+                record_played(chat_id, videoid)
 
             db[chat_id][0]["played"] = 0
 
