@@ -22,10 +22,17 @@ from BrandrdXMusic.utils.inline import help_pannel, private_panel, start_panel
 from config import BANNED_USERS
 from strings import get_string
 
+MESSAGE_EFFECTS = [
+    5107584321108051014,
+    5159385139981059251,
+    5104841245755180586,
+    5046509860389126442,
+]
 
 @app.on_message(filters.command(["start"]) & filters.private & ~BANNED_USERS)
 @LanguageStart
 async def start_pm(client, message: Message, _):
+    effect_id = random.choice(MESSAGE_EFFECTS)
     await add_served_user(message.from_user.id)
 
     if len(message.text.split()) > 1:
@@ -37,6 +44,7 @@ async def start_pm(client, message: Message, _):
                 photo=config.START_IMG_URL,
                 caption=_["help_1"].format(config.SUPPORT_CHAT),
                 reply_markup=keyboard,
+                effect_id=effect_id,
             )
 
         if name[0:3] == "sud":
@@ -112,6 +120,7 @@ async def start_pm(client, message: Message, _):
                 app.mention,
             ),
             reply_markup=InlineKeyboardMarkup(out),
+            effect_id=effect_id,
         )
 
         if await is_on_off(2):
