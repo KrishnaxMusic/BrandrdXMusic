@@ -116,7 +116,6 @@ def autoplay_markup(chat_id, mode: bool):
 
 # Stream Markup
 async def stream_markup(_, videoid, chat_id):
-    mode = await is_autoplay(chat_id)
     return [
         [
             InlineKeyboardButton(
@@ -140,7 +139,6 @@ async def stream_markup(_, videoid, chat_id):
                 callback_data=f"ADMIN Stop|{chat_id}",
             ),
         ],
-        autoplay_markup(chat_id, mode),
         [
             InlineKeyboardButton(
                 text=_["CLOSE_BUTTON"],
