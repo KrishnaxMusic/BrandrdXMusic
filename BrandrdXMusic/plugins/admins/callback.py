@@ -392,14 +392,14 @@ async def markup_timer():
                 try:
                     mystic = playing[0]["markup"]
                 except:
-                    LOGGER(__name__).warning("markup_timer: unhandled exception", exc_info=True)
+                    LOGGER(__name__).debug("markup_timer: skip")
                     continue
                 try:
                     check = checker[chat_id][mystic.id]
                     if check is False:
                         continue
                 except:
-                    LOGGER(__name__).warning("markup_timer: unhandled exception", exc_info=True)
+                    LOGGER(__name__).debug("markup_timer: skip")
                     pass
                 try:
                     language = await get_lang(chat_id)
@@ -411,14 +411,14 @@ async def markup_timer():
                     mystic = playing[0]["mystic"]
                     markup = playing[0]["markup"]
                 except:
-                    LOGGER(__name__).warning("markup_timer: unhandled exception", exc_info=True)
+                    LOGGER(__name__).debug("markup_timer: skip")
                     continue
                 try:
                     check = checker[chat_id][mystic.id]
                     if check is False:
                         continue
                 except:
-                    LOGGER(__name__).warning("markup_timer: unhandled exception", exc_info=True)
+                    LOGGER(__name__).debug("markup_timer: skip")
                     pass
                 try:
                     language = await get_lang(chat_id)
@@ -430,14 +430,14 @@ async def markup_timer():
                     mystic = playing[0]["mystic"]
                     markup = playing[0]["markup"]
                 except:
-                    LOGGER(__name__).warning("markup_timer: unhandled exception", exc_info=True)
+                    LOGGER(__name__).debug("markup_timer: skip")
                     continue
                 try:
                     check = checker[chat_id][mystic.id]
                     if check is False:
                         continue
                 except:
-                    LOGGER(__name__).warning("markup_timer: unhandled exception", exc_info=True)
+                    LOGGER(__name__).debug("markup_timer: skip")
                     pass
                 try:
                     language = await get_lang(chat_id)
@@ -466,7 +466,7 @@ async def markup_timer():
                         reply_markup=InlineKeyboardMarkup(buttons)
                     )
                 except:
-                    LOGGER(__name__).warning("markup_timer: unhandled exception", exc_info=True)
+                    LOGGER(__name__).debug("markup_timer: skip")
                     continue
             except:
                 LOGGER(__name__).warning("markup_timer: unhandled exception", exc_info=True)

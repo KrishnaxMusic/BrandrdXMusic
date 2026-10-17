@@ -22,8 +22,6 @@ telegraph
 unidecode
 yt-dlp
 py-yt-search
-youtube-search
-youtube-search-python
 lexica-api==1.5.1
 gpytranslate
 python-telegram-bot
