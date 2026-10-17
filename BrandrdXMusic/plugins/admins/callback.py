@@ -1,6 +1,7 @@
 import asyncio
 
 import config
+from pyrogram.errors import MessageNotModified
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
@@ -465,7 +466,9 @@ async def markup_timer():
                     await mystic.edit_reply_markup(
                         reply_markup=InlineKeyboardMarkup(buttons)
                     )
-                except:
+                except MessageNotModified:
+                    continue
+                except Exception:
                     LOGGER(__name__).debug("markup_timer: skip")
                     continue
             except:
