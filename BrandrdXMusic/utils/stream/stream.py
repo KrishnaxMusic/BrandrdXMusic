@@ -11,6 +11,7 @@ from BrandrdXMusic.utils.database import get_assistant
 import config
 from BrandrdXMusic import Apple, Resso, SoundCloud, Spotify, Telegram, YouTube, app
 from BrandrdXMusic.core.call import Hotty
+from BrandrdXMusic.logging import LOGGER
 from BrandrdXMusic.misc import SUDOERS
 from BrandrdXMusic.utils import seconds_to_min, time_to_seconds
 from BrandrdXMusic.utils.channelplay import get_channeplayCB
@@ -88,6 +89,7 @@ async def stream(
                     vidid,
                 ) = await YouTube.details(search, False if spotify else True)
             except:
+                LOGGER(__name__).warning("stream: unhandled exception", exc_info=True)
                 continue
             if str(duration_min) == "None":
                 continue
@@ -118,6 +120,7 @@ async def stream(
                         vidid, mystic, video=status, videoid=True
                     )
                 except:
+                    LOGGER(__name__).error("stream: unhandled exception", exc_info=True)
                     await mystic.edit_text(_["play_3"])
                 await Hotty.join_call(
                     chat_id,
@@ -183,6 +186,7 @@ async def stream(
                 vidid, mystic, videoid=True, video=status
             )
         except:
+            LOGGER(__name__).error("stream: unhandled exception", exc_info=True)
             await mystic.edit_text(_["play_3"])
         if await is_active_chat(chat_id):
             await put_queue(
@@ -476,6 +480,7 @@ async def get_thumb(videoid):
             thumbnail = result["thumbnails"][0]["url"].split("?")[0]
         return thumbnail
     except Exception as e:
+        LOGGER(__name__).error("get_thumb: unhandled exception", exc_info=True)
         return config.YOUTUBE_IMG_URL
 
 
@@ -488,4 +493,5 @@ async def get_thumb(vidid):
             thumbnail = result["thumbnails"][0]["url"].split("?")[0]
         return thumbnail
     except Exception as e:
+        LOGGER(__name__).error("get_thumb: unhandled exception", exc_info=True)
         return config.YOUTUBE_IMG_URL

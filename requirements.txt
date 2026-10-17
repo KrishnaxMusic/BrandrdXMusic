@@ -12,12 +12,11 @@ speedtest
 motor 
 pillow==9.5.0
 psutil
-py-tgcalls==0.9.7
-pyrofork
+py-tgcalls==3.0.0
 python-dotenv
 pykeyboard
 pyyaml==6.0.1
-kurigram>=2.2.26
+kurigram==2.2.26
 spotipy
 tgcrypto
 telegraph
@@ -32,5 +31,5 @@ gpytranslate
 python-telegram-bot
 pycryptodome
 opencv-python
-ntgcalls==1.1.2
+ntgcalls==3.0.3
 lyricsgenius==3.0.0
