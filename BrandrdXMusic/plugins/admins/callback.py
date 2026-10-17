@@ -1,5 +1,6 @@
 import asyncio
 
+import config
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
@@ -27,9 +28,12 @@ from BrandrdXMusic.utils.formatters import seconds_to_min
 from BrandrdXMusic.utils.inline import (
     close_markup,
     stream_markup,
+    stream_markup2,
     stream_markup_timer,
+    stream_markup_timer2,
 )
 from BrandrdXMusic.utils.stream.autoclear import auto_clean
+from BrandrdXMusic.utils.rich_stream import set_now_playing_state
 from BrandrdXMusic.utils.thumbnails import get_thumb
 from config import (
     BANNED_USERS,
@@ -410,7 +414,7 @@ async def markup_timer():
                     LOGGER(__name__).warning("markup_timer: unhandled exception", exc_info=True)
                     continue
                 try:
-                    check = wrong[chat_id][mystic.id]
+                    check = checker[chat_id][mystic.id]
                     if check is False:
                         continue
                 except:
@@ -429,7 +433,7 @@ async def markup_timer():
                     LOGGER(__name__).warning("markup_timer: unhandled exception", exc_info=True)
                     continue
                 try:
-                    check = wrong[chat_id][mystic.id]
+                    check = checker[chat_id][mystic.id]
                     if check is False:
                         continue
                 except:

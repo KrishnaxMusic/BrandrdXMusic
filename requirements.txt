@@ -14,7 +14,6 @@ pillow==9.5.0
 psutil
 py-tgcalls==3.0.0
 python-dotenv
-pykeyboard
 pyyaml==6.0.1
 kurigram==2.2.26
 spotipy
@@ -25,7 +24,6 @@ yt-dlp
 py-yt-search
 youtube-search
 youtube-search-python
-git+https://github.com/AsmSafone/SafoneAPI
 lexica-api==1.5.1
 gpytranslate
 python-telegram-bot

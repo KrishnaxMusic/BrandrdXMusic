@@ -51,6 +51,7 @@ from BrandrdXMusic.utils.inline import (
     aq_markup,
     close_markup,
     stream_markup,
+    stream_markup2,
 )
 from BrandrdXMusic.utils.pastebin import HottyBin
 from BrandrdXMusic.utils.stream.queue import put_queue, put_queue_index
@@ -160,7 +161,7 @@ async def stream(
         if count == 0:
             return
         else:
-            link = await brandedBin(msg)
+            link = await HottyBin(msg)
             lines = msg.count("\n")
             if lines >= 17:
                 car = os.linesep.join(msg.split(os.linesep)[:17])
