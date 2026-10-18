@@ -25,6 +25,7 @@ from BrandrdXMusic.misc import db
 from BrandrdXMusic.utils.database import (
     add_active_chat,
     add_active_video_chat,
+    autoplay_off,
     get_lang,
     get_loop,
     group_assistant,
@@ -74,6 +75,7 @@ async def _clear_(chat_id):
     discard_prefetch(chat_id)
     await remove_active_video_chat(chat_id)
     await remove_active_chat(chat_id)
+    await autoplay_off(chat_id)
 
 
 PLACEHOLDER_SECONDS = 120

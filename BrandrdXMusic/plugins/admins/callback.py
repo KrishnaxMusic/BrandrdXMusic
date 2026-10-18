@@ -483,6 +483,12 @@ async def nowplaying_autoplay_toggle(client, CallbackQuery, _):
         await autoplay_off(chat_id)
         toast = "Autoplay turned OFF"
     else:
+        if not await is_active_chat(chat_id):
+            await CallbackQuery.answer(
+                "No song is currently playing. Play something first, then enable Autoplay.",
+                show_alert=True,
+            )
+            return
         await autoplay_on(chat_id)
         toast = "Autoplay turned ON"
     await CallbackQuery.answer(toast, show_alert=False)

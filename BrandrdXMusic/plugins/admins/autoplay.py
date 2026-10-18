@@ -8,6 +8,7 @@ from BrandrdXMusic import app
 from BrandrdXMusic.utils.database import (
     autoplay_off,
     autoplay_on,
+    is_active_chat,
     is_autoplay,
 )
 from BrandrdXMusic.utils.decorators.admins import (
@@ -99,6 +100,12 @@ async def autoplay_toggle(client, CallbackQuery, _):
         new_mode = False
         toast = "Autoplay turned OFF"
     else:
+        if not await is_active_chat(chat_id):
+            await CallbackQuery.answer(
+                "No song is currently playing. Play something first, then enable Autoplay.",
+                show_alert=True,
+            )
+            return
         await autoplay_on(chat_id)
         new_mode = True
         toast = "Autoplay turned ON"
